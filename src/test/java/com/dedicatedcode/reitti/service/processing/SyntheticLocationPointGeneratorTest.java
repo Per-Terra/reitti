@@ -50,7 +50,7 @@ class SyntheticLocationPointGeneratorTest {
         
         // Verify last synthetic point
         LocationPoint2 lastPoint = syntheticPoints.get(6);
-        assertEquals("2023-01-01T10:01:45Z", lastPoint.getTimestamp());
+        assertEquals(Instant.parse("2023-01-01T10:01:45Z"), lastPoint.getTimestamp());
     }
 
     @Test

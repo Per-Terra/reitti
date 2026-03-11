@@ -1,5 +1,6 @@
 package com.dedicatedcode.reitti.service.integration;
 
+import com.dedicatedcode.reitti.IntegrationTest;
 import com.dedicatedcode.reitti.TestingService;
 import com.dedicatedcode.reitti.dto.ImmichAsset;
 import com.dedicatedcode.reitti.dto.ImmichSearchResponse;
@@ -34,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@IntegrationTest
 class ImmichIntegrationServiceTest {
 
     @Autowired
