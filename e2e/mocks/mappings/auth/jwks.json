@@ -1,0 +1,19 @@
+{
+  "request": { "method": "GET", "url": "/auth/jwks" },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "keys": [
+        {
+          "kty": "RSA",
+          "alg": "RS256",
+          "use": "sig",
+          "kid": "reitti-test-key",
+          "n": "v7vL_X_XzX_Example_Modulus_Data_Replace_With_Real_If_Generated",
+          "e": "AQAB"
+        }
+      ]
+    }
+  }
+}

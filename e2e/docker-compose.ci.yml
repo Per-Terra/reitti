@@ -4,8 +4,6 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      rabbitmq:
-        condition: service_healthy
       postgis:
         condition: service_healthy
         restart: true
@@ -15,11 +13,23 @@ services:
         condition: service_completed_successfully
       tile-cache:
         condition: service_healthy
+      external-mocks:
+        condition: service_started
     environment:
       POSTGIS_USER: reitti
       POSTGIS_PASSWORD: reitti
       POSTGIS_DB: reittidb
       POSTGIS_HOST: postgis
+      OIDC_ENABLED: true
+      OIDC_ISSUER_URI: http://external-mocks:8080/auth
+      OIDC_CLIENT_ID: client-id
+      OIDC_CLIENT_SECRET: client-secret
+  external-mocks:
+    image: wiremock/wiremock:latest
+    ports:
+      - "9999:8080"
+    volumes:
+      - ./mocks:/home/wiremock
   postgis:
     image: postgis/postgis:17-3.5-alpine
     environment:
@@ -45,16 +55,6 @@ services:
     depends_on:
       postgis:
         condition: service_healthy
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    environment:
-      RABBITMQ_DEFAULT_USER: reitti
-      RABBITMQ_DEFAULT_PASS: reitti
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
   redis:
     image: redis:7-alpine
     healthcheck:

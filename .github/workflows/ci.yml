@@ -152,6 +152,10 @@ jobs:
         run: npm ci
         working-directory: e2e
 
+      - name: Verify Coverage Script
+        run: npm run test:verify-coverage
+        working-directory: e2e
+
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
