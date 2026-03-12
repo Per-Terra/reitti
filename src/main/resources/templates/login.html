@@ -151,25 +151,25 @@
         <form th:action="@{/login}" method="post" th:if="${localLoginEnabled != null && localLoginEnabled}">
             <div class="form-group">
                 <label for="username" th:text="#{login.username}">Username</label>
-                <input type="text" id="username" name="username" required autofocus>
+                <input type="text" id="username" name="username" data-testid="username-input" required autofocus>
             </div>
             
             <div class="form-group">
                 <label for="password" th:text="#{login.password}">Password</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" data-testid="password-input" required>
             </div>
             
             <div class="remember-me">
-                <input type="checkbox" id="remember-me" name="remember-me">
+                <input type="checkbox" id="remember-me" name="remember-me" data-testid="remember-me-checkbox">
                 <label for="remember-me" th:text="#{login.remember.me}">Remember me</label>
             </div>
             
-            <button type="submit" th:text="#{login.button}">Login</button>
+            <button type="submit" th:text="#{login.button}" data-testid="login-submit-button">Login</button>
         </form>
         <div th:if="${oidcEnabled != null && oidcEnabled}">
             <hr th:if="${localLoginEnabled != null && localLoginEnabled}" style="margin: 30px 0; border: none; border-top: 1px solid var(--color-highlight);">
             <a th:href="@{/oauth2/authorization/oauth}" style="text-decoration: none;">
-              <button type="button" th:text="#{login.oauth.button}">Log in with OAuth</button>
+              <button type="button" th:text="#{login.oauth.button}" data-testid="oauth-login-button">Log in with OAuth</button>
             </a>
         </div>
     </div>
