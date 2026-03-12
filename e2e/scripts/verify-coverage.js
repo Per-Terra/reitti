@@ -11,9 +11,6 @@ const PROJECT_ROOT = path.join(__dirname, '../../');
 const DOCS_DIR = path.join(PROJECT_ROOT, 'docs/testing');
 const TESTS_DIR = path.join(PROJECT_ROOT, 'e2e/tests');
 
-const ID_PREFIXES = ['AUTH', 'PHOTO'];
-const idPattern = new RegExp(`(${ID_PREFIXES.join('|')})-[0-9]+`, 'g');
-
 function getFiles(dir, ext, fileList = []) {
     if (!fs.existsSync(dir)) return fileList;
     const files = fs.readdirSync(dir);
@@ -32,8 +29,14 @@ const mdFiles = getFiles(DOCS_DIR, '.md');
 const requiredIds = new Set();
 mdFiles.forEach(file => {
     const content = fs.readFileSync(file, 'utf-8');
-    const matches = content.match(idPattern);
-    if (matches) matches.forEach(id => requiredIds.add(id));
+    const matches = content.match(/\*\*([A-Z]+-[0-9]+)\*\*/g);
+    if (matches) {
+        matches.forEach(match => {
+            // Remove the ** markers and add to set
+            const id = match.replace(/\*\*/g, '');
+            requiredIds.add(id);
+        });
+    }
 });
 
 const testFiles = getFiles(TESTS_DIR, '.js');

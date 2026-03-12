@@ -1,0 +1,12 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/auth/logout"
+  },
+  "response": {
+    "status": 302,
+    "headers": {
+      "Location": "http://localhost:8080/login?logout"
+    }
+  }
+}
