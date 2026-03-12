@@ -4,7 +4,7 @@ This guide explains how to run, debug, and create E2E tests for Reitti using Pla
 
 ## Prerequisites
 
-- Node.js 20+ installed
+- Node.js 25+ installed
 - Docker and Docker Compose installed
 - Maven installed (for building the application)
 
@@ -14,6 +14,7 @@ This guide explains how to run, debug, and create E2E tests for Reitti using Pla
 
 ```bash
 # Install Playwright and its dependencies
+cd e2e
 npm install
 # Install Playwright browsers
 npx playwright install
@@ -39,7 +40,6 @@ cd ../..
 Use the CI docker-compose file to start the latest local version of the app:
 
 ```bash
-cd e2e
 # Start all services (PostgreSQL, Redis, Reitti, etc.)
 docker compose -f docker-compose.ci.yml up -d
 ```
@@ -64,22 +64,76 @@ npm test
 docker compose -f docker-compose.ci.yml down -v
 ```
 
-## Test Development Workflow
+## Test ID System and Coverage Verification
 
-### Understanding Test IDs
+Reitti uses a structured test ID system to ensure comprehensive test coverage. This system is enforced by a verification script that runs in CI.
 
-Reitti uses a test ID system to organize and track tests. Before creating a new test, you should:
+### How the Test ID System Works
 
-1. **Check existing test IDs** in `docs/testing/` (e.g., `docs/testing/authenticaion.md`)
-2. **Add a new test ID** if needed in the appropriate documentation file
-3. **Reference the test ID** in your Playwright test file
+1. **Test IDs are defined in documentation files** in `docs/testing/` (e.g., `docs/testing/authenticaion.md`)
+2. **Each test ID must have a corresponding test** in the Playwright test files
+3. **Test names must start with the Test ID** (e.g., `AUTH-01: Login with valid Username/Password`)
 
 Example from `docs/testing/authenticaion.md`:
 ```
 | Test ID     | Requirement                               | Category | Playwright Test File     |
 |-------------|-------------------------------------------|----------|--------------------------|
 | **AUTH-01** | Standard Username/Password Login          | Auth     | `e2e/tests/auth.spec.js` |
+| **AUTH-02** | Redirect & Login via OIDC (Mocked)        | Auth     | `e2e/tests/auth.spec.js` |
+| **AUTH-03** | Logout clears session & redirects to Home | Auth     | `e2e/tests/auth.spec.js` |
 ```
+
+Corresponding test in `e2e/tests/auth.spec.js`:
+```javascript
+test('AUTH-01: Login with valid Username/Password', async ({ page }) => {
+    // Test implementation
+});
+
+test('AUTH-02: Redirect & Login via OIDC (Mocked)', async ({ page }) => {
+    // Test implementation
+});
+
+test('AUTH-03: Logout clears session & redirects to Home', async ({ page }) => {
+    // Test implementation
+});
+```
+
+### Coverage Verification Script
+
+The `e2e/scripts/verify-coverage.js` script automatically checks that:
+1. Every Test ID mentioned in `docs/testing/` files exists in the test code
+2. The CI build will fail if any Test ID is missing
+
+**To verify coverage locally before committing:**
+```bash
+cd e2e
+node scripts/verify-coverage.js
+```
+
+If the script finds missing tests, it will output:
+```
+❌ Missing test implementation for: AUTH-02, AUTH-03
+```
+
+### Creating New Tests with Proper Test IDs
+
+When adding a new test:
+
+1. **First, add the Test ID to documentation** in the appropriate `docs/testing/` file
+2. **Then create the test** with a name starting with that Test ID
+3. **Run the verification script** to ensure coverage is complete
+
+Example workflow for adding a new authentication test:
+1. Add `| **AUTH-04** | Login with invalid credentials shows error | Auth | e2e/tests/auth.spec.js |` to `docs/testing/authenticaion.md`
+2. Create the test in `auth.spec.js`:
+   ```javascript
+   test('AUTH-04: Login with invalid credentials shows error', async ({ page }) => {
+       // Test implementation
+   });
+   ```
+3. Run `node scripts/verify-coverage.js` to verify
+
+## Test Development Workflow
 
 ### Creating New Tests with Playwright UI
 
@@ -103,7 +157,7 @@ This opens a browser-based UI where you can:
 1. Click the "Record new" button in the UI
 2. Select "Test" to create a new test file or "Add to existing" to extend a file
 3. Choose a browser (Chrome, Firefox, or Safari)
-4. A browser window will open – navigate to `http://localhost:8080`
+4. A browser window will open - navigate to `http://localhost:8080`
 5. Perform the actions you want to test (click, type, navigate)
 6. Playwright will automatically record your actions as test code
 7. Click "Save" to save the test
@@ -113,7 +167,7 @@ This opens a browser-based UI where you can:
 The recorded code will look something like this:
 
 ```javascript
-test('login test', async ({ page }) => {
+test('AUTH-01: Login with valid Username/Password', async ({ page }) => {
   await page.goto('http://localhost:8080/');
   await page.getByLabel('Username').click();
   await page.getByLabel('Username').fill('admin');
@@ -229,6 +283,8 @@ e2e/
 │   └── ...                  # Other test files
 ├── fixtures/                # Test data and fixtures
 ├── mocks/                   # WireMock configurations
+├── scripts/
+│   └── verify-coverage.js   # Test coverage verification
 ├── docker-compose.ci.yml    # Test environment setup
 └── playwright.config.js     # Playwright configuration
 ```
@@ -261,6 +317,8 @@ The tests are configured to run in CI environments. The `docker-compose.ci.yml` 
 - WireMock for external service mocking
 - Tile cache service
 
+**Important**: The CI build will fail if the `verify-coverage.js` script detects any missing tests. Always run this script locally before pushing changes.
+
 ## Troubleshooting
 
 ### "Connection refused" errors
@@ -287,6 +345,12 @@ rm -rf node_modules
 npm install
 npx playwright install
 ```
+
+### Coverage verification fails
+If `node scripts/verify-coverage.js` fails:
+1. Check that all Test IDs from `docs/testing/` files exist in test files
+2. Ensure test names start with the exact Test ID (e.g., `AUTH-01: ...`)
+3. Run the verification script to see which IDs are missing
 
 ## Additional Resources
 
