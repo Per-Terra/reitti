@@ -4,3 +4,4 @@
 | **AUTH-01** | Standard Username/Password Login          | Auth     | `e2e/tests/auth.spec.js` |
 | **AUTH-02** | Redirect & Login via OIDC (Mocked)        | Auth     | `e2e/tests/auth.spec.js` |
 | **AUTH-03** | Logout clears session & redirects to Home | Auth     | `e2e/tests/auth.spec.js` |
+| **AUTH-04** | Display message on invalid user name      | Auth     | `e2e/tests/auth.spec.js` |

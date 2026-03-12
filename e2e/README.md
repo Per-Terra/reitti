@@ -62,7 +62,7 @@ cd ../..
 Use the CI docker-compose file to start the latest local version of the app:
 
 ```bash
-# Start all services (PostgreSQL, Redis, Reitti, etc.)
+# Start all services (PostgresSQL, Redis, Reitti, etc.)
 docker compose -f docker-compose.ci.yml up -d
 ```
 
@@ -179,7 +179,7 @@ This opens a browser-based UI where you can:
 1. Click the "Record new" button in the UI
 2. Select "Test" to create a new test file or "Add to existing" to extend a file
 3. Choose a browser (Chrome, Firefox, or Safari)
-4. A browser window will open - navigate to `http://localhost:8080`
+4. A browser window will open – navigate to `http://localhost:8080`
 5. Perform the actions you want to test (click, type, navigate)
 6. Playwright will automatically record your actions as test code
 7. Click "Save" to save the test

@@ -7,9 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Move up from e2e/scripts/ to Project Root
-const PROJECT_ROOT = path.join(__dirname, '../');
+const PROJECT_ROOT = path.join(__dirname, '../../');
 const DOCS_DIR = path.join(PROJECT_ROOT, 'docs/testing');
-const TESTS_DIR = path.join(__dirname, '../e2e/tests');
+const TESTS_DIR = path.join(PROJECT_ROOT, 'e2e/tests');
 
 const ID_PREFIXES = ['AUTH', 'PHOTO'];
 const idPattern = new RegExp(`(${ID_PREFIXES.join('|')})-[0-9]+`, 'g');
@@ -36,7 +36,7 @@ mdFiles.forEach(file => {
     if (matches) matches.forEach(id => requiredIds.add(id));
 });
 
-const testFiles = getFiles(TESTS_DIR, '.ts');
+const testFiles = getFiles(TESTS_DIR, '.js');
 const testContent = testFiles.map(file => fs.readFileSync(file, 'utf-8')).join('\n');
 const missingIds = Array.from(requiredIds).filter(id => !testContent.includes(id));
 
