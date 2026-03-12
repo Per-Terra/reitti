@@ -25,7 +25,11 @@ public class GeocodeService {
     public GeocodeService(Long id, String name, String url, boolean enabled, int errorCount, Instant lastUsed, Instant lastError, GeocoderType type, Map<String, String> additionalParameters, int priority, Long version) {
         this.id = id;
         this.name = name;
-        this.url = url;
+        if (url.endsWith("/")) {
+            this.url = url.substring(0, url.length() - 1);
+        } else {
+            this.url = url;
+        }
         this.enabled = enabled;
         this.errorCount = errorCount;
         this.lastUsed = lastUsed;
