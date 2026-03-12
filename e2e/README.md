@@ -4,7 +4,29 @@ This guide explains how to run, debug, and create E2E tests for Reitti using Pla
 
 ## Prerequisites
 
-- Node.js 25+ installed
+### Installing Node.js with NVM (Node Version Manager)
+
+If you don't have Node.js installed, we recommend using NVM to manage Node.js versions:
+
+```bash
+# Install NVM (Node Version Manager)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+
+# Restart your terminal or run:
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Install Node.js 24+ (check for latest LTS version)
+nvm install --lts
+
+# Verify installation
+node --version
+npm --version
+```
+
+**Note**: The Playwright tests require Node.js 24 or higher. Using NVM makes it easy to switch between Node.js versions if needed.
+
+- Node.js 24+ installed
 - Docker and Docker Compose installed
 - Maven installed (for building the application)
 
@@ -357,4 +379,3 @@ If `node scripts/verify-coverage.js` fails:
 - [Playwright Documentation](https://playwright.dev/docs/intro)
 - [Playwright Test Generator](https://playwright.dev/docs/codegen)
 - [Playwright Debugging Guide](https://playwright.dev/docs/debug)
-- [Reitti Testing Documentation](docs/testing/)
