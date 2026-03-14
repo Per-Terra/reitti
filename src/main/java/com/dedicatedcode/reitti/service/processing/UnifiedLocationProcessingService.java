@@ -497,9 +497,9 @@ public class UnifiedLocationProcessingService {
             if (samePlace && !withinTimeThreshold) {
                 List<RawLocationPoint> pointsBetweenVisits;
                 if (previewId == null) {
-                    pointsBetweenVisits = this.rawLocationPointJdbcService.findByUserAndTimestampBetweenOrderByTimestampAsc(user, currentEndTime, nextVisit.getStartTime());
+                    pointsBetweenVisits = this.rawLocationPointJdbcService.findByUserAndTimestampBetweenOrderByTimestampAsc(user, currentEndTime, nextVisit.getStartTime(), false, false, false);
                 } else {
-                    pointsBetweenVisits = this.previewRawLocationPointJdbcService.findByUserAndTimestampBetweenOrderByTimestampAsc(user, previewId, currentEndTime, nextVisit.getStartTime());
+                    pointsBetweenVisits = this.previewRawLocationPointJdbcService.findByUserAndTimestampBetweenOrderByTimestampAsc(user, previewId, currentEndTime, nextVisit.getStartTime(), false, false, false);
                 }
                 if (pointsBetweenVisits.size() > 2) {
                     double travelledDistanceInMeters = GeoUtils.calculateTripDistance(pointsBetweenVisits);
@@ -760,9 +760,9 @@ public class UnifiedLocationProcessingService {
         // Get location points between the two visits
         List<RawLocationPoint> tripPoints;
         if (previewId == null) {
-            tripPoints = rawLocationPointJdbcService.findByUserAndTimestampBetweenOrderByTimestampAsc(user, tripStartTime, tripEndTime.plusMillis(1));
+            tripPoints = rawLocationPointJdbcService.findByUserAndTimestampBetweenOrderByTimestampAsc(user, tripStartTime, tripEndTime.plusMillis(1), false, false, false);
         } else {
-            tripPoints = previewRawLocationPointJdbcService.findByUserAndTimestampBetweenOrderByTimestampAsc(user, previewId, tripStartTime, tripEndTime.plusMillis(1));
+            tripPoints = previewRawLocationPointJdbcService.findByUserAndTimestampBetweenOrderByTimestampAsc(user, previewId, tripStartTime, tripEndTime.plusMillis(1), false, false, false);
         }
         double estimatedDistanceInMeters = calculateDistanceBetweenPlaces(startVisit.getPlace(), endVisit.getPlace());
         double travelledDistanceMeters = GeoUtils.calculateTripDistance(tripPoints);

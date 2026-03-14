@@ -49,6 +49,24 @@ public class PreviewRawLocationPointJdbcService {
                 user.getId(), Timestamp.from(startTime), Timestamp.from(endTime), previewId);
     }
 
+    public List<RawLocationPoint> findByUserAndTimestampBetweenOrderByTimestampAsc(
+            User user, String previewId, Instant startTime, Instant endTime, boolean includeSynthetic, boolean includeIgnored, boolean includeInvalid) {
+        StringBuilder sql = new StringBuilder()
+                .append("SELECT rlp.id, rlp.accuracy_meters, rlp.elevation_meters, rlp.timestamp, rlp.user_id, ST_AsText(rlp.geom) as geom, rlp.processed, rlp.synthetic, rlp.ignored, rlp.version ")
+                .append("FROM preview_raw_location_points rlp ")
+                .append("WHERE rlp.user_id = ? AND preview_id = ? ");
+        if (!includeSynthetic) {
+            sql.append("AND rlp.synthetic = false ");
+        }
+        if (!includeIgnored) {
+            sql.append("AND rlp.ignored = false ");
+        }
+        // preview raw location points don't have invalid column
+        sql.append("AND rlp.timestamp BETWEEN ? AND ? ORDER BY rlp.timestamp");
+        return jdbcTemplate.query(sql.toString(), rawLocationPointRowMapper,
+                user.getId(), previewId, Timestamp.from(startTime), Timestamp.from(endTime));
+    }
+
     public List<RawLocationPoint> findByUserAndProcessedIsFalseOrderByTimestampWithLimit(User user, String previewId, int limit, int offset) {
         String sql = "SELECT rlp.id, rlp.accuracy_meters, rlp.elevation_meters, rlp.timestamp, rlp.user_id, ST_AsText(rlp.geom) as geom, rlp.processed, rlp.synthetic, rlp.ignored, rlp.version " +
                 "FROM preview_raw_location_points rlp " +
@@ -63,7 +81,7 @@ public class PreviewRawLocationPointJdbcService {
         String sql = "SELECT rlp.id, rlp.accuracy_meters, rlp.elevation_meters, rlp.timestamp, rlp.user_id, ST_AsText(rlp.geom) as geom, rlp.processed, rlp.synthetic, rlp.ignored, rlp.version , " +
                 "ST_ClusterDBSCAN(rlp.geom, ?, ?) over () AS cluster_id " +
                 "FROM preview_raw_location_points rlp " +
-                "WHERE rlp.user_id = ? AND rlp.timestamp BETWEEN ? AND ? AND preview_id = ?";
+                "WHERE rlp.user_id = ? AND rlp.timestamp BETWEEN ? AND ? AND preview_id = ? AND rlp.ignored = false";
 
         return jdbcTemplate.query(sql, (rs, _) -> {
 
